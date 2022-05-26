@@ -88,47 +88,11 @@ def LabelPlot(ax,title,xtitle,ytitle):
     ax.set_title(title, fontsize=14,fontname='Times New Roman')
     ax.set_xlabel(xtitle, fontsize=12,fontname='Times New Roman')
     ax.set_ylabel(ytitle, fontsize=12,fontname='Times New Roman')
-
-
-def hist_show(arr, hist_bins=None, title="", xtitle="", ytitle="",\
-              xlabels=None, ylabels=None,outfile=False):
-
-    if hist_bins == None:
-        hist_bins = arr.shape
-
-    subsamples = np.zeros(2)    
-    subsamples[0] = int(arr.shape[0]/hist_bins[0])
-    subsamples[1] = int(arr.shape[1]/hist_bins[1])
-
-    fig, ax = plt.subplots()
-    im = plt.imshow(-1*arr, origin='lower',cmap=cm.hot)
-
-    ax.set_title(title, fontsize=14,fontname='Times New Roman')
-    ax.set_xlabel(xtitle, fontsize=12,fontname='Times New Roman')
-    ax.set_ylabel(ytitle, fontsize=12,fontname='Times New Roman')
-
-
-    ax.set_xticks(np.linspace(-.5, hist_bins[1]*subsamples[1]-.5, num=hist_bins[1]+1))
-    ax.set_xticklabels('')
-    if xlabels is not None:
-        ax.set_xticks(np.linspace(subsamples[1]/2.0 - .5, hist_bins[1]*subsamples[1]-subsamples[1]/2.-0.5, num=hist_bins[1]), minor=True)    
-        ax.set_xticklabels(xlabels, minor=True)
-    
-    ax.set_yticks(np.linspace(-.5, hist_bins[0]*subsamples[0]-.5, num=hist_bins[0]+1))
-    ax.set_yticklabels('')
-    if ylabels is not None:
-        ax.set_yticks(np.linspace(subsamples[0]/2.0 - .5, hist_bins[0]*subsamples[0]-subsamples[0]/2.-0.5, num=hist_bins[0]), minor=True)
-        ax.set_yticklabels(ylabels,minor=True)
-    
-    ax.tick_params(axis='both', which='minor', length = 0.0)
-    ax.grid(visible=True, which='Major', linestyle='-', linewidth='0.5',color='k')
-    DisplayPlot(fig,outfile)
-
     
 
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
-    xlims=None,ylims=None,scale=("Linear","Linear"),grid=False,
-    marker='',labels=None,outfile=False):    
+    xlims=None,ylims=None,scale=("Linear","Linear"),grid=False, \
+    grid_minor=False, marker='',labels=None,outfile=False):    
     """
     Displays/Creates a plot
 
@@ -138,6 +102,7 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
         title:    title for the plot
         ylabel:   title for the y-axis
         outfile:  location to save the file
+        grid: False, x, y, both
                 
     Returns:
         Nothing
@@ -163,7 +128,22 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     ax.set_yscale(scale[1])
     
     if grid != False:
-        ax.grid(b=True, which='Major', linestyle='-', linewidth='0.25',color='k')
+        if grid == "x":
+            ax.grid(b=True, which='major', axis="x", linestyle='-', linewidth='0.25',color='k')
+        elif grid == "y":
+            ax.grid(b=True, which='major', axis="y", linestyle='-', linewidth='0.25',color='k')
+        else:
+            ax.grid(b=True, which='major', linestyle='-', linewidth='0.25',color='k')
+
+    if grid_minor != False:
+        if grid_minor == "x":
+            ax.grid(b=True, which='minor', axis="x", linestyle='-', linewidth='0.25',color='k')
+        elif grid_minor == "y":
+            ax.grid(b=True, which='minor', axis="y", linestyle='-', linewidth='0.25',color='k')
+        else:
+            ax.grid(b=True, which='minor', linestyle='-', linewidth='0.25',color='k')
+
+
 
     FormatLimits(ax,xlims,ylims)
     LabelPlot(ax,title,xtitle,ytitle)
@@ -222,8 +202,7 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",coord
 
     fig, ax = plt.subplots()
     #im = plt.imshow(image, vmin=window[0], vmax=window[1])
-    im = plt.imshow(image, vmin=window[0], vmax=window[1], cmap=cm.Greys_r, extent=coords, origin="lower")
-    #ax.set_title(title, fontsize=14)
+    im = plt.imshow(image, vmin=window[0], interpolation='None', vmax=window[1], cmap=cm.Greys_r, extent=coords, origin="lower")
     LabelPlot(ax,title,xtitle,ytitle)
     
     if coords == None:
@@ -238,3 +217,53 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",coord
 
     DisplayPlot(fig,outfile)
 
+
+def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitle="",\
+              xlabels=None, ylabels=None,outfile=False):
+
+
+    if bins == None:
+        binsX, binsY = arr.shape
+    else:
+        if arr.shape[0]%bins[0] != 0 or arr.shape[1]%bins[1] != 0:
+            raise ValueError("Array must be evenly divisible by bins")
+        else:
+            binsX, binsY = bins
+
+    if window == False:
+        window = [np.min(arr),np.max(arr)]
+            
+    fig, ax = plt.subplots()
+    im = plt.imshow(arr.T, origin='lower',cmap=cm.Greys_r)
+    LabelPlot(ax,title,xtitle,ytitle)
+
+
+    bin_samplesX = int(arr.shape[0]/binsX)
+    bin_samplesY = int(arr.shape[1]/binsY)
+
+
+
+    ax.set_xticks(np.linspace(-.5, binsX*bin_samplesX-.5, binsX+1))
+    ax.set_xticklabels('')
+    if xlabels is not None:
+        ax.set_xticks(np.linspace(bin_samplesX/2.0, bin_samplesX*(binsX - 0.5), binsX) - 0.5, minor=True)    
+        ax.set_xticklabels(xlabels, minor=True)
+    
+    ax.set_yticks(np.linspace(-.5, binsY*bin_samplesY-.5, binsY+1))
+    ax.set_yticklabels('')
+    if ylabels is not None:
+        ax.set_yticks(np.linspace(bin_samplesY/2.0, bin_samplesY*(binsY - 0.5), binsY) - 0.5, minor=True)
+        ax.set_yticklabels(ylabels,minor=True)
+    
+    ax.tick_params(axis='both', which='minor', length = 0.0)
+    ax.grid(visible=True, which='Major', linestyle='-', linewidth='0.5',color='k')
+    
+    if ctitle != "":
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes("right", size="5%", pad=0.10)
+        cbar = plt.colorbar(im, cax=cax, ticks=window)
+        cbar.ax.set_ylabel(ctitle)
+        cbar.ax.tick_params(labelsize=10) 
+    
+    
+    DisplayPlot(fig,outfile)
