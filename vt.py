@@ -8,10 +8,9 @@ import matplotlib.cm as cm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-#Formats the figures
+#Sets the default font for all images
 def FormatFig():
     mpl.rc('font', family='Times New Roman')
-
 
 
 #Manipulates the y-axis to be the correct dimensions
