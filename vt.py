@@ -67,9 +67,10 @@ def FormatLimits(ax,xlim,ylim):
         ax.set_ylim(ylim[0],ylim[1])
 
 
-def FormatTicks(ax,image,xlim,ylim):
+def FormatTicks(ax,image,xlim,ylim,ticks):
     
     if xlim is not None:
+        ticks = True
         ticks_loc = ax.get_xticks().tolist()
         tick_labels = np.array(ticks_loc)/(image.shape[1]-1)* \
             (xlim[1] - xlim[0]) + xlim[0]
@@ -78,6 +79,7 @@ def FormatTicks(ax,image,xlim,ylim):
         ax.set_xticklabels(tick_labels)
         
     if ylim is not None:
+        ticks = True
         ticks_loc = ax.get_yticks().tolist()
         tick_labels = np.array(ticks_loc)/(image.shape[0]-1)* \
             (ylim[1] - ylim[0]) + ylim[0]
@@ -85,6 +87,8 @@ def FormatTicks(ax,image,xlim,ylim):
         ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
         ax.set_yticklabels(tick_labels)
 
+    if ticks == False:
+        RemoveTicks(ax)
 
 def RemoveTicks(ax):
     ax.tick_params(length=0)
@@ -255,7 +259,7 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
 
 
 def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
-                xlim=None,ylim=None,extent=None,outfile=None):
+           ticks=False,xlim=None,ylim=None,extent=None,outfile=None):
     """
     Displays/Creates a BW intensity image
 
@@ -280,13 +284,10 @@ def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
     im = plt.imshow(image, vmin=vmin, vmax=vmax, interpolation='None', \
                     cmap=cm.Greys_r, extent=extent, origin="lower")
     LabelPlot(ax,title,xtitle,ytitle)
-
-
-    FormatTicks(ax,image,xlim,ylim)
+    FormatTicks(ax,image,xlim,ylim,ticks)
 
     if ctitle != "":
         FormatColorBar(ax,im,vmin,vmax,ctitle)
-
 
     DisplayPlot(fig,outfile)
 

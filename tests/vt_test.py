@@ -14,13 +14,20 @@ import vt
 i = np.meshgrid(range(21),range(11))[0]
 
 vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title")
-
+vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ticks=True)
 
 vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="C Title")
+vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="C Title",\
+          ticks=True)
+
+vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="C Title",\
+          xlim=(0,210))
+vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="C Title",\
+          xlim=(0,210),ylim=(-5,5))
 
 
 
-
+    
 vt.CreateImage(i, title='Title', xtitle="X Title", ytitle="Y Title")
 
 
