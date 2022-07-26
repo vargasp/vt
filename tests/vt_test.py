@@ -1,8 +1,41 @@
-import pylab as py
-import importlib
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jul 20 14:25:36 2022
+
+@author: vargasp
+"""
 
 import numpy as np
 import vt
+
+
+
+i = np.meshgrid(range(21),range(11))[0]
+
+vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title")
+
+
+vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="C Title")
+
+
+
+
+vt.CreateImage(i, title='Title', xtitle="X Title", ytitle="Y Title")
+
+
+vt.CreateImage(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="ctitle")
+
+
+
+vt.CreateImage(i, title='Title', xtitle="X Title", ytitle="Y Title", coords=[0,1,0,1],ctitle="ctitle")
+
+
+
+
+
+
+
 
 x = np.linspace(100,200)
 y = x**2

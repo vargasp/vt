@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
+import matplotlib.ticker as mticker
+
 
 #Sets the default font for all images
 def FormatFig():
@@ -63,6 +65,39 @@ def FormatLimits(ax,xlim,ylim):
     
     if ylim != None:
         ax.set_ylim(ylim[0],ylim[1])
+
+
+def FormatTicks(ax,image,xlim,ylim):
+    
+    if xlim is not None:
+        ticks_loc = ax.get_xticks().tolist()
+        tick_labels = np.array(ticks_loc)/(image.shape[1]-1)* \
+            (xlim[1] - xlim[0]) + xlim[0]
+
+        ax.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
+        ax.set_xticklabels(tick_labels)
+        
+    if ylim is not None:
+        ticks_loc = ax.get_yticks().tolist()
+        tick_labels = np.array(ticks_loc)/(image.shape[0]-1)* \
+            (ylim[1] - ylim[0]) + ylim[0]
+
+        ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
+        ax.set_yticklabels(tick_labels)
+
+
+def RemoveTicks(ax):
+    ax.tick_params(length=0)
+    ax.set_xticklabels('')
+    ax.set_yticklabels('')
+
+
+def FormatColorBar(ax,im,vmin,vmax,ctitle):
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    cbar = plt.colorbar(im, cax=cax, ticks = [vmin,vmax])
+    cbar.ax.set_ylabel(ctitle)
+    cbar.ax.tick_params(labelsize=10) 
 
 
 def DisplayPlot(fig, outfile):
@@ -123,6 +158,7 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     if labels[0] != '':
         ax.legend(loc=0, fontsize=10)
 
+
     ax.set_xscale(scale[0])
     ax.set_yscale(scale[1])
     
@@ -141,7 +177,6 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
             ax.grid(b=True, which='minor', axis="y", linestyle='-', linewidth='0.25',color='k')
         else:
             ax.grid(b=True, which='minor', linestyle='-', linewidth='0.25',color='k')
-
 
 
     FormatLimits(ax,xlims,ylims)
@@ -181,7 +216,8 @@ def CreateTiffImage(image, outfile=None):
     img.save(outfile+'.tif')
 
 
-def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",coords=None,outfile=None):
+def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
+                xvals=None,yvals=None,coords=None,outfile=None):
     """
     Displays/Creates a BW intensity image
 
@@ -205,7 +241,8 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",coord
     LabelPlot(ax,title,xtitle,ytitle)
     
     if coords == None:
-        ax.axis('off')
+        RemoveTicks(ax)
+    
 
     if ctitle != "":
         divider = make_axes_locatable(ax)
@@ -213,6 +250,43 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",coord
         cbar = plt.colorbar(im, cax=cax, ticks=window)
         cbar.ax.set_ylabel(ctitle)
         cbar.ax.tick_params(labelsize=10) 
+
+    DisplayPlot(fig,outfile)
+
+
+def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
+                xlim=None,ylim=None,extent=None,outfile=None):
+    """
+    Displays/Creates a BW intensity image
+
+    Parameters:        
+        image:    2d np.array of the image to be displayed
+        window:   list or tuple of window range (min, max)
+        title:    title for the image
+        ctitle:   title for the colorbar
+        outfile:  location to save the file
+                
+    Returns:
+        Nothing
+    """
+
+    if vmin is None:
+        vmin = np.min(image)
+
+    if vmax is None:
+        vmax = np.max(image)    
+
+    fig, ax = plt.subplots()
+    im = plt.imshow(image, vmin=vmin, vmax=vmax, interpolation='None', \
+                    cmap=cm.Greys_r, extent=extent, origin="lower")
+    LabelPlot(ax,title,xtitle,ytitle)
+
+
+    FormatTicks(ax,image,xlim,ylim)
+
+    if ctitle != "":
+        FormatColorBar(ax,im,vmin,vmax,ctitle)
+
 
     DisplayPlot(fig,outfile)
 
@@ -237,25 +311,31 @@ def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitl
     LabelPlot(ax,title,xtitle,ytitle)
 
 
+    
     bin_samplesX = int(arr.shape[0]/binsX)
     bin_samplesY = int(arr.shape[1]/binsY)
 
-
-
+    print(bin_samplesX)
+    
     ax.set_xticks(np.linspace(-.5, binsX*bin_samplesX-.5, binsX+1))
     ax.set_xticklabels('')
+    #ax.tick_params(length=0)
+    
     if xlabels is not None:
         ax.set_xticks(np.linspace(bin_samplesX/2.0, bin_samplesX*(binsX - 0.5), binsX) - 0.5, minor=True)    
         ax.set_xticklabels(xlabels, minor=True)
     
-    ax.set_yticks(np.linspace(-.5, binsY*bin_samplesY-.5, binsY+1))
+    #ax.set_yticks(np.linspace(-.5, binsY*bin_samplesY-.5, binsY+1))
     ax.set_yticklabels('')
     if ylabels is not None:
         ax.set_yticks(np.linspace(bin_samplesY/2.0, bin_samplesY*(binsY - 0.5), binsY) - 0.5, minor=True)
         ax.set_yticklabels(ylabels,minor=True)
-    
+   
     ax.tick_params(axis='both', which='minor', length = 0.0)
+    
     ax.grid(visible=True, which='Major', linestyle='-', linewidth='0.5',color='k')
+    
+    
     
     if ctitle != "":
         divider = make_axes_locatable(ax)
