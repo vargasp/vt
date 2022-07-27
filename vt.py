@@ -76,7 +76,7 @@ def FormatTicks(ax,image,xlim,ylim,ticks):
             (xlim[1] - xlim[0]) + xlim[0]
 
         ax.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-        ax.set_xticklabels(tick_labels)
+        ax.xaxis.set_major_formatter(mticker.FixedFormatter(tick_labels))
         
     if ylim is not None:
         ticks = True
@@ -85,7 +85,7 @@ def FormatTicks(ax,image,xlim,ylim,ticks):
             (ylim[1] - ylim[0]) + ylim[0]
 
         ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-        ax.set_yticklabels(tick_labels)
+        ax.yaxis.set_major_formatter(mticker.FixedFormatter(tick_labels))
 
     if ticks == False:
         RemoveTicks(ax)
