@@ -4,10 +4,60 @@ import matplotlib as mpl
 from PIL import Image
 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 import matplotlib.cm as cm
+
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-import matplotlib.ticker as mticker
+def round_sig(x, sig):
+    """
+    Rounds a number x to sig number of significant digits 
+
+    Parameters
+    ----------
+    x : int or float
+        Value to be rounded.
+    sig : int
+        The number of significant digits to round x.
+
+    Returns
+    -------
+    float
+        Rounded value.
+    """
+    
+    #Condition to account for the log of 0
+    if x == 0.0:
+        return 0.0
+    else:
+        return round(x, sig-int(np.floor(np.log10(abs(x))))-1)
+
+
+def float2readablestr(x, sig=3):
+    """
+    Converts a float or int to a readable string value
+
+    Parameters
+    ----------
+    x : int or float
+        Value to be converted.
+    sig : int
+        The number of significant digits to round x. Default is 3
+
+    Returns
+    -------
+    str
+        A human readable string of x.
+    """
+
+    #Rounds the variable to sig number of signficant digits
+    x = round_sig(x, sig)
+    
+    #If the value is within machine precission to 0 return '0'
+    if np.isclose(x, 0):
+        return "{:d}".format(int(np.rint(x)))
+
+    return "{:g}".format(x)
 
 
 #Sets the default font for all images
@@ -75,8 +125,9 @@ def FormatTicks(ax,image,xlim,ylim,ticks):
         tick_labels = np.array(ticks_loc)/(image.shape[1]-1)* \
             (xlim[1] - xlim[0]) + xlim[0]
 
-        ax.xaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-        ax.xaxis.set_major_formatter(mticker.FixedFormatter(tick_labels))
+        tick_labels = [float2readablestr(x) for x in tick_labels]
+        ax.xaxis.set_major_locator(ticker.FixedLocator(ticks_loc))
+        ax.xaxis.set_major_formatter(ticker.FixedFormatter(tick_labels))
         
     if ylim is not None:
         ticks = True
@@ -84,8 +135,9 @@ def FormatTicks(ax,image,xlim,ylim,ticks):
         tick_labels = np.array(ticks_loc)/(image.shape[0]-1)* \
             (ylim[1] - ylim[0]) + ylim[0]
 
-        ax.yaxis.set_major_locator(mticker.FixedLocator(ticks_loc))
-        ax.yaxis.set_major_formatter(mticker.FixedFormatter(tick_labels))
+        tick_labels = [float2readablestr(x) for x in tick_labels]
+        ax.yaxis.set_major_locator(ticker.FixedLocator(ticks_loc))
+        ax.yaxis.set_major_formatter(ticker.FixedFormatter(tick_labels))
 
     if ticks == False:
         RemoveTicks(ax)
@@ -259,7 +311,7 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
 
 
 def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
-           ticks=False,xlim=None,ylim=None,extent=None,outfile=None):
+           cmap=cm.Greys_r,ticks=False,xlim=None,ylim=None,extent=None,outfile=None):
     """
     Displays/Creates a BW intensity image
 
@@ -274,6 +326,7 @@ def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
         Nothing
     """
 
+    cmap = 'inferno'
     if vmin is None:
         vmin = np.min(image)
 
@@ -282,7 +335,7 @@ def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
 
     fig, ax = plt.subplots()
     im = plt.imshow(image, vmin=vmin, vmax=vmax, interpolation='None', \
-                    cmap=cm.Greys_r, extent=extent, origin="lower")
+                    cmap=cmap, extent=extent, origin="lower")
     LabelPlot(ax,title,xtitle,ytitle)
     FormatTicks(ax,image,xlim,ylim,ticks)
 
