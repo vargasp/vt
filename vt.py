@@ -122,9 +122,28 @@ def FormatTicks(ax,image,xlim,ylim,ticks):
     if xlim is not None:
         ticks = True
         ticks_loc = ax.get_xticks().tolist()
-        tick_labels = np.array(ticks_loc)/(image.shape[1]-1)* \
+        tick_labels = np.array(ticks_loc)/(image.shape[1])* \
             (xlim[1] - xlim[0]) + xlim[0]
-
+        
+        """
+        print(np.array(ticks_loc))
+            
+            
+        print("HI")
+        print(ax.get_xlim())
+        k = ax.get_xlim()
+        ax.set_xlim(xlim)
+        ticks_loc = ax.get_xticks().tolist()
+        ax.set_xlim(k)
+        
+        print(ax.get_xlim())
+        
+        print(np.array(ticks_loc))
+        print(image.shape[1])
+        print(xlim[1] - xlim[0])
+        print(tick_labels)
+        """
+        
         tick_labels = [float2readablestr(x) for x in tick_labels]
         ax.xaxis.set_major_locator(ticker.FixedLocator(ticks_loc))
         ax.xaxis.set_major_formatter(ticker.FixedFormatter(tick_labels))
@@ -342,6 +361,57 @@ def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
     if ctitle != "":
         FormatColorBar(ax,im,vmin,vmax,ctitle)
 
+    DisplayPlot(fig,outfile)
+
+
+def imshow2(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
+           cmap=cm.Greys_r,ticks=False,xlim=None,ylim=None,extent=None,outfile=None):
+    """
+    Displays/Creates a BW intensity image
+
+    Parameters:        
+        image:    2d np.array of the image to be displayed
+        window:   list or tuple of window range (min, max)
+        title:    title for the image
+        ctitle:   title for the colorbar
+        outfile:  location to save the file
+                
+    Returns:
+        Nothing
+    """
+
+    cmap = 'inferno'
+    if vmin is None:
+        vmin = np.min(image)
+
+    if vmax is None:
+        vmax = np.max(image)    
+
+    fig, ax = plt.subplots()
+    im = plt.imshow(image, vmin=vmin, vmax=vmax, interpolation='None', \
+                    cmap=cmap, extent=extent, origin="lower")
+    #FormatTicks(ax,image,xlim,ylim,ticks)
+
+    
+    # Minor ticks
+    #ax.set_xticks(np.arange(-.5, image.shape[1], 1), minor=True)
+    #ax.set_yticks(np.arange(-.5, image.shape[0], 1), minor=True)
+    
+    # Gridlines based on minor ticks
+    #ax.grid(which='minor', color='k', linestyle='-', linewidth=1)
+
+    #ax.xaxis.set_major_locator(ticker.MultipleLocator(1.0))
+    #ax.yaxis.set_major_locator(ticker.MultipleLocator(1.0))
+
+    ax.xaxis.set_minor_locator(ticker.IndexLocator(base=1.0,offset=0.0))
+    ax.yaxis.set_minor_locator(ticker.IndexLocator(base=1.0,offset=0.0))
+    ax.xaxis.set_major_locator(ticker.IndexLocator(base=1.0,offset=0.5))
+    ax.yaxis.set_major_locator(ticker.IndexLocator(base=1.0,offset=0.5))
+
+    ax.grid(which='minor', color='k', linestyle='-', linewidth=.5)
+    #ax.grid(which='major', color='k', linestyle='-', linewidth=.5)
+
+    #RemoveTicks(ax)
     DisplayPlot(fig,outfile)
 
 

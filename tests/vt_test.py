@@ -26,6 +26,13 @@ vt.imshow(i, title='Title', xtitle="X Title", ytitle="Y Title",ctitle="C Title",
           xlim=(0,210),ylim=(-5,5))
 
 
+    
+i = np.meshgrid(range(21),range(11))[0]
+vt.imshow2(i, title='Title')
+    
+    
+    
+    
 
     
 vt.CreateImage(i, title='Title', xtitle="X Title", ytitle="Y Title")
