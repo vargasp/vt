@@ -8,13 +8,19 @@ Created on Thu Oct 27 07:36:40 2022
 
 import numpy as np
 
-import cv2
+#import cv2
 import scipy.spatial.transform as transform
 from scipy import ndimage
+import skimage
 
 
+def warp(img, mat):
+    
+    tform = skimage.transform.ProjectiveTransform(matrix=mat)
+    return skimage.transform.warp(img, tform.inverse)
 
-def sobel2d(img):
+
+def sobel2d(img, mag=True):
     """
     Creates a 2d Sobel filtered image
     
@@ -31,21 +37,27 @@ def sobel2d(img):
     
     dx = ndimage.sobel(img, 0)  # horizontal derivative
     dy = ndimage.sobel(img, 1)  # vertical derivative
-    return np.hypot(dx, dy)
+    
+    if mag == True:
+        return np.hypot(dx, dy)
+    else:
+        return dx, dy
 
 
 def hmat(t=(0.0,0.0,0.0),theta=0.0,phi=0.0,psi=0.0,c=0.0,s=1.0):
     """
     Creates a homography matrix from angle rotations, translations, and scaling
+    on an (M, N) matrix. 
     
     Parameters
     ----------
     t : scalar or array_like
-        The translation vector. Default 0.0
+        The translation vector (dM, dN, NOT IMPLMENTED). Default 0.0
     s : scalar or array_like
-            The scaling vector (sx, sy). Default 1.0
+            The scaling vector (sM, sN). Default 1.0
     c : scalar or array_like
-        The center of rotation vector (cx, cy). Default 0.0
+        The center of rotation vector (cM, cN) in pixel values. Default 0.0
+        which will be the corner of the image.
     phi : float
         The pitch rotation angle in radians
 
@@ -77,22 +89,22 @@ def hmat(t=(0.0,0.0,0.0),theta=0.0,phi=0.0,psi=0.0,c=0.0,s=1.0):
     I = np.identity(3)
     I[0,0] = f
     I[1,1] = f
-    I[0,2] = -c[0]
-    I[1,2] = -c[1]
+    I[0,2] = -c[1]
+    I[1,2] = -c[0]
         
     #Translation/Scaling matrix
     ST = np.identity(3)
-    ST[0,0] = s[0]
-    ST[1,1] = s[1]
-    ST[0,2] = t[0]
-    ST[1,2] = t[1]
+    ST[0,0] = s[1]
+    ST[1,1] = s[0]
+    ST[0,2] = t[1]
+    ST[1,2] = t[0]
     
     #Rotation Matrix
     R = transform.Rotation.from_euler('xyz', [psi,phi,theta], degrees=True).as_matrix()
     
     return np.linalg.inv(I) @ ST @ R @ I
 
-
+"""
 
 def homgraphy_mat(img1, img2):
 
@@ -199,7 +211,7 @@ def homgraphy_ma2t(img1, img2):
 
 
 
-
+"""
 
 
 

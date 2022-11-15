@@ -9,35 +9,35 @@ Created on Thu Oct 27 07:39:05 2022
 import numpy as np
 import matplotlib.pyplot as plt
 
-from skimage import data
-from skimage import transform
-from skimage import img_as_float
+from skimage import data, img_as_float
 
-import comp_vision as cv
+
+import vt.comp_vision as cv
+
+
 
 img = img_as_float(data.chelsea())
+img = np.flipud(img)
 
-
-
-cx = 451./2
-cy = 150
-cz = 0
-tx = 0
-ty = 0
-tz = 0
-theta = 0
-phi = 0.1
+c = np.array(img.shape)[:2]/2.0
+t = (0.0, 0.0, 0.0)
+theta = 45
+phi = 0.0
 psi = 0.0
-f = .10
+s = (1.0, 0.5)
 
-t = (tx,ty,tz)
-c = (cx,cy,cz)
-
-img = img_as_float(data.chelsea())
-mat = cv.euler_to_rot2(t=t,theta=theta,phi=phi,psi=psi,c=c,s=f)
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi,c=c,s=s)
 print(mat)
-print()
 
+img_t = cv.warp(img, mat)
+
+plt.imshow(img_t, origin='lower')
+
+
+
+
+
+"""
 tform = transform.ProjectiveTransform(matrix=mat)
 tf_img = transform.warp(img, tform.inverse)
 fig, ax = plt.subplots()
@@ -46,8 +46,6 @@ ax.set_title('Projective transformation 3x3')
 plt.show()
 
 
-
-"""
 mat = cv.euler_to_rot3(t=t,theta=theta,phi=phi,psi=psi,c=c,f=f)
 print(mat)
 
