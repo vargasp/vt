@@ -20,11 +20,12 @@ img = img_as_float(data.chelsea())
 img = np.flipud(img)
 
 c = np.array(img.shape)[:2]/2.0
+c[0] =0
 t = (0.0, 0.0, 0.0)
-theta = 45
+theta = 0
 phi = 0.0
-psi = 0.0
-s = (1.0, 0.5)
+psi = 0.1
+s = (1.0, 1.0)
 
 mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi,c=c,s=s)
 print(mat)
@@ -32,6 +33,29 @@ print(mat)
 img_t = cv.warp(img, mat)
 
 plt.imshow(img_t, origin='lower')
+
+
+img = img_as_float(data.chelsea())
+img = np.flipud(img)
+
+c = np.array(img.shape)[:2]/2.0
+c[0] =0
+t = (-100, 0.0, 0.0)
+theta = 0
+phi = 0.0
+psi = 0.1
+s = (1.0, 1.21)
+
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi,c=c,s=s)
+print(mat)
+
+img_t = cv.warp(img, mat)
+
+plt.imshow(img_t, origin='lower')
+
+
+
+
 
 
 
