@@ -44,7 +44,7 @@ def sobel2d(img, mag=True):
         return dx, dy
 
 
-def hmat(t=(0.0,0.0,0.0),theta=0.0,phi=0.0,psi=0.0,c=0.0,s=1.0):
+def hmat(t=(0.0,0.0,0.0),theta=0.0,phi=0.0,psi=0.0,c=0.0,s=1.0, f=(1.0,1.0)):
     """
     Creates a homography matrix from angle rotations, translations, and scaling
     on an (M, N) matrix. 
@@ -85,10 +85,9 @@ def hmat(t=(0.0,0.0,0.0),theta=0.0,phi=0.0,psi=0.0,c=0.0,s=1.0):
         t = np.append(t,0.0)
     
     #Intrinsic imaging matrix
-    f=1
     I = np.identity(3)
-    I[0,0] = f
-    I[1,1] = f
+    I[0,0] = f[0]
+    I[1,1] = f[1]
     I[0,2] = -c[1]
     I[1,2] = -c[0]
         
