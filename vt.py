@@ -177,7 +177,8 @@ def FormatColorBar(ax,im,vmin,vmax,ctitle):
 
 def DisplayPlot(fig, outfile):
     if outfile:
-        plt.savefig(outfile + '.pdf',format='pdf',bbox_inches='tight')
+        print("highy")
+        plt.savefig(outfile + '.png',format='pdf',bbox_inches='tight',dpi=1000)
         plt.close(fig)
     else:
         plt.show()

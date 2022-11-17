@@ -29,47 +29,148 @@ img = np.flipud(img)
 I = checker(5,10, p=50)
 img = I
 
+
+
 nX, nY = img.shape[:2]
 c = [nX/2.0, nY/2]
 c[0] = 0
+t = [0.0, 0.0, 0.0]
+theta = 0
+phi = 0.0
+psi = 60
+s = (1., 1.)
+f = (1, 1)
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
+print(mat)
+img_t = cv.warp(img, mat)
+plt.imshow(img_t, origin='lower')
+
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=-psi/nX,c=c,s=s,f=f)
+print(mat)
+img_tr = cv.warp(img_t, mat)
+plt.imshow(img_tr, origin='lower')
+
+
+
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 250
 t = [0.0, 0.0, 0.0]
 t[0] = -250
 theta = 0
 phi = 0.0
 psi = 60
-s = (1.6, 1.6)
+s = (1., 1.)
 f = (1, 1)
 mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
 print(mat)
-
 img_t = cv.warp(img, mat)
 plt.imshow(img_t, origin='lower')
 
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 0
+t = [0.0, 0.0, 0.0]
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=-psi/nX,c=c,s=s,f=f)
+print(mat)
+img_tr = cv.warp(img_t, mat)
+plt.imshow(img_tr, origin='lower')
 
 
 
 
 
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 0
+t = [0.0, 0.0, 0.0]
+theta = 10
+phi = 0.0
+psi = 60
+s = (1., 1.)
+f = (1, 1)
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
+print(mat)
+img_t = cv.warp(img, mat)
+plt.imshow(img_t, origin='lower')
+
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=-psi/nX,c=c,s=s,f=f)
+print(mat)
+img_tr = cv.warp(img_t, mat)
+plt.imshow(img_tr, origin='lower')
 
 
-img = img_as_float(data.chelsea())
-img = np.flipud(img)
 
-c = np.array(img.shape)[:2]/2.0
-c[0] =0
-t = (-100, 0.0, 0.0)
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 250
+t = [0.0, 0.0, 0.0]
+t[0] = -250
 theta = 0
 phi = 0.0
 psi = 60
-s = (1.0, 1.21)
-
+s = (1., 1.)
+f = (1, 1)
 mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
 print(mat)
-
 img_t = cv.warp(img, mat)
-
 plt.imshow(img_t, origin='lower')
 
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 0
+t = [0.0, 0.0, 0.0]
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=-psi/nX,c=c,s=s,f=f)
+print(mat)
+img_tr = cv.warp(img_t, mat)
+plt.imshow(img_tr, origin='lower')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 0
+t = [0.0, 0.0, 0.0]
+theta = 0
+phi = 0.0
+psi = 15
+s = (1., 1.)
+f = (1, 1)
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
+print(mat)
+img_t = cv.warp(img, mat)
+plt.imshow(img_t, origin='lower')
+
+
+
+nX, nY = img.shape[:2]
+c = [nX/2.0, nY/2]
+c[0] = 100
+t = [0.0, 0.0, 0.0]
+t[0] = -100
+theta = 0
+phi = 0.0
+psi = 15
+s = (1., 1.)
+f = (1, 1)
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
+print(mat)
+img_t = cv.warp(img, mat)
+plt.imshow(img_t, origin='lower')
 
 
 
