@@ -30,25 +30,54 @@ I = checker(5,10, p=50)
 img = I
 
 
-
+#Simulate Tile
 nX, nY = img.shape[:2]
-c = [nX/2.0, nY/2]
-c[0] = 0
+c = [0.0, nY/2]
 t = [0.0, 0.0, 0.0]
-theta = 0
-phi = 0.0
 psi = 60
-s = (1., 1.)
-f = (1, 1)
-mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
+mat = cv.hmat(t=t,psi=psi/nX,c=c)
 print(mat)
 img_t = cv.warp(img, mat)
 plt.imshow(img_t, origin='lower')
 
-mat = cv.hmat(t=t,theta=theta,phi=phi,psi=-psi/nX,c=c,s=s,f=f)
+
+#Coorect tile
+mat = cv.hmat(t=t,psi=-psi/nX,c=c)
 print(mat)
 img_tr = cv.warp(img_t, mat)
 plt.imshow(img_tr, origin='lower')
+
+
+#Shift titled
+c = [0.0, nY/2]
+mat = cv.hmat(psi=-psi/nX,c=c)
+img_tt = cv.warp(img_t, mat)
+
+t = [-250.0, 0.0, 0.0]
+mat = cv.hmat(t=t)
+img_tt = cv.warp(img_tt, mat)
+
+mat = cv.hmat(psi=psi/nX,c=c)
+img_tt = cv.warp(img_tt, mat)
+plt.imshow(img_tt, origin='lower')
+
+
+
+#Shift titled
+c = [0.0, nY/2]
+t = [-250.0, 0.0, 0.0]
+
+mat1 = cv.hmat(psi=-psi/nX,c=c)
+mat = cv.hmat(t=t)
+img_tt = cv.warp(img_tt, mat)
+
+mat = cv.hmat(psi=psi/nX,c=c)
+img_tt = cv.warp(img_tt, mat)
+plt.imshow(img_tt, origin='lower')
+
+
+
+
 
 
 
@@ -60,12 +89,11 @@ t[0] = -250
 theta = 0
 phi = 0.0
 psi = 60
-s = (1., 1.)
-f = (1, 1)
-mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX,c=c,s=s,f=f)
+mat = cv.hmat(t=t,theta=theta,phi=phi,psi=psi/nX)
 print(mat)
 img_t = cv.warp(img, mat)
 plt.imshow(img_t, origin='lower')
+
 
 nX, nY = img.shape[:2]
 c = [nX/2.0, nY/2]
