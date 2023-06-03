@@ -201,7 +201,7 @@ def LabelPlot(ax,title,xtitle,ytitle):
     
 
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
-    xlims=None,ylims=None,scale=("Linear","Linear"),grid=False, \
+    xlims=None,ylims=None,scale=("linear","linear"),grid=False, \
     grid_minor=False, marker='',labels=None,outfile=False):    
     """
     Displays/Creates a plot
