@@ -293,7 +293,7 @@ def CreateTiffImage(image, outfile=None):
 
 
 def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
-                xvals=None,yvals=None,coords=None,outfile=None):
+                xvals=None,yvals=None,coords=None,outfile=None,text_strings=None):
     """
     Displays/Creates a BW intensity image
 
@@ -307,6 +307,7 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
     Returns:
         Nothing
     """
+    plt.rcParams['figure.dpi'] = 600
     
     if window == False:
         window = [np.min(image),np.max(image)]
@@ -326,6 +327,10 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
         cbar = plt.colorbar(im, cax=cax, ticks=window)
         cbar.ax.set_ylabel(ctitle)
         cbar.ax.tick_params(labelsize=10) 
+
+    if text_strings != None:
+        for text_string in text_strings:
+            ax.text(text_string[0], text_string[1], text_string[2], fontsize=10, color='white')
 
     DisplayPlot(fig,outfile)
 
