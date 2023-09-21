@@ -199,6 +199,21 @@ def LabelPlot(ax,title,xtitle,ytitle):
     ax.set_xlabel(xtitle, fontsize=12,fontname='Times New Roman')
     ax.set_ylabel(ytitle, fontsize=12,fontname='Times New Roman')
     
+  
+def scale_bar(ax, image, pixels, sb_label=u"10 \u03bcm"):
+    nY, nX = image.shape
+    x0 = (0.95 - pixels/nX) *nX
+    x1 = 0.95*nX
+    y0 = 0.05*nY
+    y1 = 0.0625*nY
+    text_shfit = 0
+    
+    plt.plot([x0,x1], [y0,y0], 'w-')
+    plt.plot([x0,x0], [y0,y1], 'w-')
+    plt.plot([x1,x1], [y0,y1], 'w-')
+    
+    ax.text(x0+text_shfit, 0.01*nY,sb_label, fontsize=10, color='white')
+
 
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     xlims=None,ylims=None,scale=("linear","linear"),grid=False, \
@@ -331,6 +346,8 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
     if text_strings != None:
         for text_string in text_strings:
             ax.text(text_string[0], text_string[1], text_string[2], fontsize=10, color='white')
+
+
 
     DisplayPlot(fig,outfile)
 
