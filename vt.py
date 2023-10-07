@@ -306,6 +306,9 @@ def CreateTiffImage(image, outfile=None):
     img = Image.fromarray(image.astype(np.float32))
     img.save(outfile+'.tif')
 
+def ReadTiffImage(infile):
+    return np.array(Image.open(infile))
+
 
 def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
                 xvals=None,yvals=None,coords=None,outfile=None,text_strings=None):
