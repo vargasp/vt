@@ -307,7 +307,20 @@ def CreateTiffImage(image, outfile=None):
     img.save(outfile+'.tif')
 
 def ReadTiffImage(infile):
-    return np.array(Image.open(infile))
+    im_obj = Image.open(infile)
+    n_frames = im_obj.n_frames
+    
+    if n_frames == 1:
+        return np.array(im_obj)
+    else:
+        w,h = im_obj.size
+        dataset = np.empty([h,w,n_frames])
+        
+        for i in range(n_frames):
+           im_obj.seek(i)
+           dataset[:,:,i] = np.array(im_obj)
+        
+        return dataset
 
 
 def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
