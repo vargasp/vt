@@ -13,43 +13,41 @@ from scipy.spatial import transform
 from scipy.ndimage import affine_transform
 
 
-def transGenD(coords):
+def transMat(coords,rank=None):
     coords = np.array(coords)
     n = coords.size
-    T = np.identity(n+1)
-    T[:n,n] = coords
+    
+    if rank == None:
+        rank = n+1
+    
+    T = np.identity(rank)
+    T[:n,-1] = coords
     
     return T
+
+
+def rotateMat(angs, center=None, seq='XYZ', extrinsic=True):
+    if not extrinsic:
+        seq = str.lower(seq)
     
-
-
-def rotate2D(theta):
-    return transform.Rotation.from_euler('z', [theta], degrees=True).as_matrix()
-
-
-def rotate3D(theta, phi, psi, extrinsic=True):
-    if extrinsic:
-        return transform.Rotation.from_euler('XYZ', [psi,phi,theta], degrees=True).as_matrix()
-    else:
-        return transform.Rotation.from_euler('xyz', [psi,phi,theta], degrees=True).as_matrix()
-
-
-def rotateGenD(angs, extrinsic=True):
     angs = np.array(angs)
-    if angs.size == 1:
-        return rotate2D(angs)
-    else:
-        return rotate3D(*angs, extrinsic=extrinsic)
-
-
-def rotate(angs, center=None, extrinsic=True):
+    n = angs.size
+    seq = seq[(3-n):]
+        
+    R =  transform.Rotation.from_euler(seq, angs, degrees=True).as_matrix()
     
     if center == None:
-        return rotateGenD(angs, extrinsic=extrinsic)
+        return  R
     else:
-        T = transGenD(center)
-        R  = rotateGenD(angs, extrinsic=extrinsic)
+        RN = np.identity(4)
+        RN[:3,:3] = R
+        R = RN
+        
+        T = transMat(center, rank=4)
+        print(T.shape)
+        print(R.shape)
         return np.linalg.inv(T) @ R @ T
+
 
 
 nX = 5
