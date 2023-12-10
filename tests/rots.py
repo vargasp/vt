@@ -46,10 +46,20 @@ def rotateMat(angs, center=None, seq='XYZ', extrinsic=True, rank=None):
     angs = np.array(angs)
     n = angs.size
 
-    #
-    if rank==None and n==1:
-        rank = 2
-    elif rank==None:
+
+    if n == 1:
+        min_rank = 2
+    else:
+        min_rank = 3
+    
+    if center != None:
+        min_rank = max(max(np.array(center).size + 1,3), min_rank)
+
+    if rank == None:
+        rank = min_rank
+    else:
+        rank = max(min_rank, rank)
+    
             
 
     #If the angle is intrinsic lower the sequence 
@@ -60,17 +70,16 @@ def rotateMat(angs, center=None, seq='XYZ', extrinsic=True, rank=None):
     seq = seq[(3-n):]
     
     #Calcuatd a 3x3 rotation matrix (centered at the 0,0)
-    R =  transform.Rotation.from_euler(seq, angs, degrees=True).as_matrix()
-    
+    R = transform.Rotation.from_euler(seq, angs, degrees=True)
+    R = R.as_matrix().squeeze()
+    R = rankIdn(R, rank)
+
     #Returns the R matrix or modifies it if rotation center is provided
     if center == None:
-        return  R
+        return R
     else:
-        T = transMat(center, rank=4)
-        R = rankIdn(R, 4)
+        T = transMat(center, rank=rank)
         
-        print(T.shape)
-        print(R.shape)
         return np.linalg.inv(T) @ R @ T
 
 
