@@ -40,27 +40,18 @@ def transMat(coords,rank=None):
     return T
 
 
-def rotateMat(angs, center=None, seq='XYZ', extrinsic=True, rank=None):
+def rotateMat(angs, center=None, seq='XYZ', extrinsic=True, rank=2):
 
     #Converts angs to an np.array and calcualtes the number of angles
     angs = np.array(angs)
     n = angs.size
-
-
-    if n == 1:
-        min_rank = 2
-    else:
-        min_rank = 3
     
-    if center != None:
-        min_rank = max(max(np.array(center).size + 1,3), min_rank)
+    #If more than one rotation is provided R must be at least rank 3 
+    #Rank must be 1 more than the number of translation or have min of 3
+    if n > 1: rank = max(rank, 3)    
+    if center != None: rank = max(rank, 3)
+    if np.array(center).size > 2: rank = max(rank, 4)
 
-    if rank == None:
-        rank = min_rank
-    else:
-        rank = max(min_rank, rank)
-    
-            
 
     #If the angle is intrinsic lower the sequence 
     if not extrinsic:
