@@ -8,6 +8,7 @@ import matplotlib.ticker as ticker
 import matplotlib.cm as cm
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+plt.rcParams['figure.dpi'] = 600
 
 def round_sig(x, sig):
     """
