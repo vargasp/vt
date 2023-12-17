@@ -8,6 +8,7 @@ Created on Sat Dec 16 15:14:44 2023
 import numpy as np
 import matplotlib.pyplot as plt
 
+import vir.affine_transforms as af
 from skimage.transform import radon
 
 nX = 128
@@ -34,15 +35,15 @@ for z in range(nZ):
 plt.imshow(sino[:,int(nZ/2),:].T, origin='lower')
 
 
-coords = coords_array((nX,nY,1), ones=True)
+coords = af.coords_array((nX,nY,1), ones=True)
 coords = np.transpose(coords,[1,2,0,3])
 coords = np.ascontiguousarray(coords)
 coords[:,:,2,0] = 32
 
-T = transMat((64,64,0),rank=None)
+T = af.transMat((64,64,0),rank=None)
 TC = (T @ coords)
 TC = np.transpose(TC,[2,0,1,3])[:3,...]
-test = coords_transform(phantom, TC)
+test = af.coords_transform(phantom, TC)
 plt.imshow(test[:,:,0],origin='lower')
 
 
