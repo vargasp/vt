@@ -8,9 +8,8 @@ Created on Thu Dec  7 19:30:07 2023
 import numpy as np
 import matplotlib.pyplot as plt
 
-import vt.comp_vision as cv
 from scipy.spatial import transform
-from scipy.ndimage import affine_transform
+from scipy.ndimage import map_coordinates
 
 def rankIdn(A, rank):
     n,m = A.shape
@@ -22,9 +21,6 @@ def rankIdn(A, rank):
         return I
     else:
         return A[:rank,:rank]
-
-
-
 
 
 def transMat(coords,rank=None):
@@ -49,7 +45,7 @@ def rotateMat(angs, center=None, seq='XYZ', extrinsic=True, rank=2):
     #If more than one rotation is provided R must be at least rank 3 
     #Rank must be 1 more than the number of translation or have min of 3
     if n > 1: rank = max(rank, 3)    
-    if center != None: rank = max(rank, 3)
+    if center is None: rank = max(rank, 3)
     if np.array(center).size > 2: rank = max(rank, 4)
 
 
@@ -66,24 +62,37 @@ def rotateMat(angs, center=None, seq='XYZ', extrinsic=True, rank=2):
     R = rankIdn(R, rank)
 
     #Returns the R matrix or modifies it if rotation center is provided
-    if center == None:
+    if center is None:
         return R
     else:
         T = transMat(center, rank=rank)
         
-        return np.linalg.inv(T) @ R @ T
+        return  T @ R @ np.linalg.inv(T)
+
+
+def coords_array(shape,ones=False):
+    if len(shape) == 1:
+        coords = np.mgrid[:shape[0]]
+    elif len(shape) == 2:
+        coords = np.mgrid[:shape[0],:shape[1]]
+    elif len(shape) == 3:
+        coords = np.mgrid[:shape[0],:shape[1],:shape[2]]
+    else:
+        print("Dimensions must be between 1 and 3")
+
+    if ones:
+        return np.concatenate([coords,np.ones(shape)[np.newaxis,...]], axis = 0, dtype=float)
+    else:
+        return np.stack(coords, axis = 0, dtype=float)
+
+
+def coords_transform(arr, coords):
+    return map_coordinates(arr, coords, order=1, mode='constant', cval=0.0)
 
 
 
-nX = 5
-nY = 10
-nZ = 15
 
-X, Y = np.mgrid[:nX, :nY]
-coords2 = np.stack([X,Y,np.ones(X.shape)], axis = -2, dtype=float)
 
-X, Y, Z = np.mgrid[:nX, :nY, :nZ]
-coords3 = np.stack([X,Y,Z,np.ones(X.shape)], axis = -2, dtype=float)
 
 
 T = trans2D(1,-.1)
