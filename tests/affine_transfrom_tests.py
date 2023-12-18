@@ -11,6 +11,43 @@ import matplotlib.pyplot as plt
 import vir.affine_transforms as af
 from skimage.transform import radon
 
+
+def wobble(coords, center, angs, theta, phi):
+    """
+    [nAngles,nRows,nCols]
+
+    Parameters
+    ----------
+    coords : TYPE
+        DESCRIPTION.
+    center : TYPE
+        DESCRIPTION.
+    angs : TYPE
+        DESCRIPTION.
+    theta : TYPE
+        DESCRIPTION.
+    phi : TYPE
+        Angle between the principle axis of stage rotation and sample rotation
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    phis = np.arccos(np.cos(angs+theta))/np.pi * phi
+    thetas = np.arccos(np.sin(angs+theta))/np.pi * phi
+
+
+    for i, ang in enumerate(angs):
+        R = af.rotateMat((0,phis[i],thetas[i]), center=center)
+        RC = R @ coords[i,...]
+        coords[i,...] = RC
+        
+    return coords
+    
+    
+
 nX = 128
 nY = 128
 nZ = 64
