@@ -36,34 +36,27 @@ plt.imshow(sino[:,int(nZ/2),:].T, origin='lower')
 
 
 coords = af.coords_array((nX,nY,1), ones=True)
-coords = np.transpose(coords,[1,2,0,3])
-coords = np.ascontiguousarray(coords)
 coords[:,:,2,0] = 32
 
-T = af.transMat((64,64,0),rank=None)
+T = af.transMat((64,64,0))
 TC = (T @ coords)
-TC = np.transpose(TC,[2,0,1,3])[:3,...]
 test = af.coords_transform(phantom, TC)
 plt.imshow(test[:,:,0],origin='lower')
 
 
-R = rotateMat((0,0,90), center=np.array(phantom.shape)/2.0)
+R = af.rotateMat((0,0,90), center=np.array(phantom.shape)/2.0)
 RC = (R @ coords)
-RC = np.transpose(RC,[2,0,1,3])[:3,...]
-test = coords_transform(phantom, RC)
+test = af.coords_transform(phantom, RC)
 plt.imshow(test[:,:,0],origin='lower')
 
 
 
-coords = coords_array((nX,nY,1), ones=True)
-coords = np.transpose(coords,[1,2,0,3])
-coords = np.ascontiguousarray(coords)
+coords = af.coords_array((nX,nY,1), ones=True)
 
-T = transMat((0,0,32),rank=None)
-R = rotateMat((0,90,0), center=np.array(phantom.shape)/2.0)
+T = af.transMat((0,0,32),rank=None)
+R = af.rotateMat((0,90,0), center=np.array(phantom.shape)/2.0)
 RTC = (R @ T @ coords)
-RTC = np.transpose(RTC,[2,0,1,3])[:3,...]
-test = coords_transform(phantom, RTC)
+test = af.coords_transform(phantom, RTC)
 plt.imshow(test[:,:,0],origin='lower')
 
 
