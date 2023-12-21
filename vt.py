@@ -307,6 +307,14 @@ def CreateTiffImage(image, outfile=None):
     img = Image.fromarray(image.astype(np.float32))
     img.save(outfile+'.tif')
 
+
+def ReadTiffImageStack(infile, z):
+    im_obj = Image.open(infile)
+    im_obj.seek(z)
+
+    return np.array(im_obj)
+        
+
 def ReadTiffImage(infile):
     im_obj = Image.open(infile)
     n_frames = im_obj.n_frames
@@ -512,3 +520,37 @@ def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitl
     
     
     DisplayPlot(fig,outfile)
+
+
+def animated_gif(images, outfile, fps=24.):
+    """
+    Creates an animated gif from a stack of images
+
+    Parameters
+    ----------
+    images : (n, nY, nX)
+        Stack of images to animate.
+    outfile : string
+        The outputfile name
+    fps : float, optional
+        The number of images displayed per second. The default is 24.
+
+    Returns
+    -------
+    None.
+
+    """
+    
+    gif = []
+    for image in images:
+        image = image.clip(0)*255/images.max().T
+        img = Image.fromarray(image.astype(np.float32))
+        gif.append(img)
+
+
+    gif[0].save(outfile+'.gif', save_all=True,optimize=False, \
+                append_images=gif[1:], duration=len(gif)/fps, loop=0)
+
+
+
+
