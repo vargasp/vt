@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib as mpl
 
 from PIL import Image
+Image.MAX_IMAGE_PIXELS = None
+
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
