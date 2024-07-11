@@ -25,17 +25,48 @@ nX = 128
 nY = 128
 nZ = 64
 
-phantom = np.zeros([nX, nY])
-phantom[32:96,32:96] = 1
-phantom = np.tile(phantom, (nZ,1,1))
-phantom = phantom.transpose([1,2,0])
-phantom *= np.arange(nZ)
+phantom2d = np.zeros([nX, nY])
+phantom2d[32:96,32:96] = 1
+phantom3d = np.tile(phantom2d, (nZ,1,1))
+phantom3d = phantom3d.transpose([1,2,0])
+phantom3d *= np.arange(nZ)
+
+
+"""
+2d
+"""
+coords = af.coords_array((nX,nY), ones=True)
+test = af.coords_transform(phantom2d, coords)
+plt.imshow(test,origin='lower')
+
+T = af.transMat((16,16))
+TC = (T @ coords)
+test = af.coords_transform(phantom2d, TC)
+plt.imshow(test,origin='lower')
+
+R = af.rotateMat(np.pi/4, center=np.array(phantom2d.shape)/2.0)
+RC = (R @ coords)
+test = af.coords_transform(phantom2d, RC)
+plt.imshow(test,origin='lower')
+
+R = af.rotateMat((0.,0.1,0.), center=(64,0))
+print(R)
+RC = (R @ coords)
+test = af.coords_transform(phantom2d, RC)
+plt.imshow(test,origin='lower')
+
+R = af.rotateMat((0.1,0.,0), center=(0,64))
+print(R)
+RC = (R @ coords)
+test = af.coords_transform(phantom2d, RC)
+plt.imshow(test,origin='lower')
+
 
 
 
 
 """
-2d
+2.1d
 """
 coords = af.coords_array((nX,nY,1), ones=True)
 coords[:,:,2,:] = 32
