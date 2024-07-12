@@ -19,6 +19,7 @@ from scipy.ndimage import affine_transform
 def affine3d(arr, mat):
     return affine_transform(arr,mat,order=1,cval=0.0)
 
+def angle_gif(images)
     
 
 nX = 128
@@ -55,6 +56,24 @@ RC = (R @ coords)
 test = af.coords_transform(phantom2d, RC)
 plt.imshow(test,origin='lower')
 
+
+
+R = af.rotateMat((0.01,0,0.), center=(64,0))
+print(R)
+R = af.rotateMat((-0.01,0.), center=(64,0))
+print(R)
+
+
+
+
+R = af.rotateMat((0.,0.01,0.), center=(0,64))
+print(R)
+R = af.rotateMat((0.,-0.01,0.), center=(0,64))
+print(R)
+
+
+
+
 R = af.rotateMat((0.1,0.,0), center=(0,64))
 print(R)
 RC = (R @ coords)
@@ -62,7 +81,22 @@ test = af.coords_transform(phantom2d, RC)
 plt.imshow(test,origin='lower')
 
 
+samples = 240
+arr = np.zeros([samples])
+angles = np.linspace(-.1, .1, samples)
+tests =np.zeros([samples, nX,nY])
+for idx, angle in enumerate(angles):
+    R = af.rotateMat((0.,angle,0.), center=(64,64))
+    RC = (R @ coords)
+    tests[idx,:,:,] = af.coords_transform(phantom2d, RC)
 
+    
+    
+vt.animated_gif(tests, "outfile128", fps=24)
+        
+        
+        
+plt.plot(angles,arr)
 
 
 """
