@@ -220,7 +220,7 @@ def scale_bar(ax, image, pixels, sb_label=u"10 \u03bcm"):
 
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     xlims=None,ylims=None,scale=("linear","linear"),grid=False, \
-    grid_minor=False, marker='',labels=None,outfile=False):    
+    grid_minor=False,color=None,marker='',linestyle='-',labels=None,outfile=False):    
     """
     Displays/Creates a plot
 
@@ -243,8 +243,20 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
 
     fig, ax = plt.subplots()
     if err is None:
+        if color is None:
+            color = [None]*nPlots
+            
+        if len(marker) != nPlots:
+            marker = [marker]*nPlots
+
+        if len(linestyle) != nPlots:
+            linestyle = [linestyle]*nPlots
+            
+        print(linestyle)
         for i in range(nPlots):
-            ax.plot(xs[:,i],ys[:,i],label=labels[i],marker=marker)
+            print(linestyle[i])
+            print(marker[i])
+            ax.plot(xs[:,i],ys[:,i],label=labels[i],marker=marker[i],linestyle=linestyle[i],color=color[i])
     else:
         for i in range(nPlots):
             ax.errorbar(xs[:,i],ys[:,i],yerr=err,label=labels[i], fmt='o',capsize=3,capthick=.5, elinewidth=.5, ecolor='r', markersize=3)
