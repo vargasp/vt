@@ -270,19 +270,19 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     
     if grid != False:
         if grid == "x":
-            ax.grid(b=True, which='major', axis="x", linestyle='-', linewidth='0.25',color='k')
+            ax.grid(which='major', axis="x", linestyle='-', linewidth='0.25',color='k')
         elif grid == "y":
-            ax.grid(b=True, which='major', axis="y", linestyle='-', linewidth='0.25',color='k')
+            ax.grid(which='major', axis="y", linestyle='-', linewidth='0.25',color='k')
         else:
-            ax.grid(b=True, which='major', linestyle='-', linewidth='0.25',color='k')
+            ax.grid(which='major', linestyle='-', linewidth='0.25',color='k')
 
     if grid_minor != False:
         if grid_minor == "x":
-            ax.grid(b=True, which='minor', axis="x", linestyle='-', linewidth='0.25',color='k')
+            ax.grid(which='minor', axis="x", linestyle='-', linewidth='0.25',color='k')
         elif grid_minor == "y":
-            ax.grid(b=True, which='minor', axis="y", linestyle='-', linewidth='0.25',color='k')
+            ax.grid(which='minor', axis="y", linestyle='-', linewidth='0.25',color='k')
         else:
-            ax.grid(b=True, which='minor', linestyle='-', linewidth='0.25',color='k')
+            ax.grid(which='minor', linestyle='-', linewidth='0.25',color='k')
 
 
     FormatLimits(ax,xlims,ylims)
