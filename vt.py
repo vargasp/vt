@@ -10,7 +10,11 @@ import matplotlib.ticker as ticker
 import matplotlib.cm as cm
 
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+#Sets the default font for all images
 plt.rcParams['figure.dpi'] = 600
+plt.rcParams['font.family'] ='Roboto'
+
 
 def round_sig(x, sig):
     """
@@ -63,20 +67,14 @@ def float2readablestr(x, sig=3):
     return "{:g}".format(x)
 
 
-#Sets the default font for all images
-def FormatFig():
-    mpl.rc('font', family='Times New Roman')
-
-
 #Manipulates the y-axis to be the correct dimensions
 def FormatYs(ys):
     ys = np.array(ys)
 
     nDims = ys.ndim
-    if(nDims > 2):
-       print("Dimenions of the array must be 1 or 2")
-    
-    if(nDims == 1):
+    if(nDims > 2 or nDims == 0):
+       raise ValueError("Y array must have a dimension of 1 or 2")
+    elif(nDims == 1):
         ys = ys[:,np.newaxis]
 
     return ys 
@@ -92,8 +90,8 @@ def FormatXs(xs,ys):
         xs = np.array(xs)
 
     nDims = xs.ndim
-    if(nDims > 2):
-        print("Dimenions of the array must be 1 or 2")
+    if(nDims != 1):
+       raise ValueError("X array must have a dimension of 1")
 
     xs = np.tile(xs, [nPlots,1]).T
 
@@ -110,8 +108,31 @@ def FormatLabels(labels, nLabels):
 
     return labels
 
+def FormatLines(color, marker, linestyle, nPlots):
+    if color is None:
+        color = [None]*nPlots
+        
+    if len(marker) != nPlots:
+        marker = [marker]*nPlots
 
-def FormatLimits(ax,xlim,ylim):
+    if len(linestyle) != nPlots:
+        linestyle = [linestyle]*nPlots
+
+    return color, marker, linestyle
+
+
+def FormatGrid(ax, glidlines, axis):
+        if axis == "x":
+            ax.grid(which=glidlines, axis=axis, linestyle='-', linewidth='0.25',color='k')
+        elif axis == "y":
+            ax.grid(which=glidlines, axis=axis, linestyle='-', linewidth='0.25',color='k')
+        else:
+            ax.grid(which=glidlines, linestyle='-', linewidth='0.25',color='k')
+
+
+def FormatAxes(ax,xlim,ylim,scale):
+    ax.set_xscale(scale[0])
+    ax.set_yscale(scale[1])
     
     if xlim != None:
         ax.set_xlim(xlim[0],xlim[1])
@@ -119,7 +140,7 @@ def FormatLimits(ax,xlim,ylim):
     if ylim != None:
         ax.set_ylim(ylim[0],ylim[1])
 
-
+    
 def FormatTicks(ax,image,xlim,ylim,ticks):
     
     if xlim is not None:
@@ -180,7 +201,6 @@ def FormatColorBar(ax,im,vmin,vmax,ctitle):
 
 def DisplayPlot(fig, outfile):
     if outfile:
-        print("highy")
         plt.savefig(outfile + '.png',format='png',bbox_inches='tight',dpi=1000)
         plt.close(fig)
     else:
@@ -190,17 +210,15 @@ def DisplayPlot(fig, outfile):
 def LabelPlot(ax,title,xtitle,ytitle):
     for tick in ax.xaxis.get_ticklabels():
         tick.set_fontsize(10)
-        tick.set_fontname('Times New Roman')
         tick.set_color('black')
 
     for tick in ax.yaxis.get_ticklabels():
         tick.set_fontsize(10)
-        tick.set_fontname('Times New Roman')
         tick.set_color('black')
 
-    ax.set_title(title, fontsize=14,fontname='Times New Roman')
-    ax.set_xlabel(xtitle, fontsize=12,fontname='Times New Roman')
-    ax.set_ylabel(ytitle, fontsize=12,fontname='Times New Roman')
+    ax.set_title(title, fontsize=14)
+    ax.set_xlabel(xtitle, fontsize=12)
+    ax.set_ylabel(ytitle, fontsize=12)
     
   
 def scale_bar(ax, image, pixels, sb_label=u"10 \u03bcm"):
@@ -219,8 +237,9 @@ def scale_bar(ax, image, pixels, sb_label=u"10 \u03bcm"):
 
 
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
-    xlims=None,ylims=None,scale=("linear","linear"),grid=False, \
-    grid_minor=False,color=None,marker='',linestyle='-',labels=None,outfile=False):    
+    xlims=None,ylims=None,scale=("linear","linear"),
+    grid=False,grid_minor=False,
+    color=None,marker='',linestyle='-',labels=None,outfile=False):    
     """
     Displays/Creates a plot
 
@@ -240,52 +259,24 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     xs = FormatXs(xs,ys)
     nSamples, nPlots = ys.shape
     labels = FormatLabels(labels, nPlots)
+    color, marker, linestyle = FormatLines(color, marker, linestyle, nPlots)
 
     fig, ax = plt.subplots()
     if err is None:
-        if color is None:
-            color = [None]*nPlots
-            
-        if len(marker) != nPlots:
-            marker = [marker]*nPlots
-
-        if len(linestyle) != nPlots:
-            linestyle = [linestyle]*nPlots
-            
-        print(linestyle)
         for i in range(nPlots):
-            print(linestyle[i])
-            print(marker[i])
-            ax.plot(xs[:,i],ys[:,i],label=labels[i],marker=marker[i],linestyle=linestyle[i],color=color[i])
+            ax.plot(xs[:,i],ys[:,i],label=labels[i],marker=marker[i],\
+                    linestyle=linestyle[i],color=color[i])
     else:
         for i in range(nPlots):
-            ax.errorbar(xs[:,i],ys[:,i],yerr=err,label=labels[i], fmt='o',capsize=3,capthick=.5, elinewidth=.5, ecolor='r', markersize=3)
+            ax.errorbar(xs[:,i],ys[:,i],yerr=err,label=labels[i],\
+                        fmt='o',capsize=3,markersize=3,\
+                        capthick=.5,elinewidth=.5,ecolor='r')
 
-    if labels[0] != '':
-        ax.legend(loc=0, fontsize=10)
+    if labels[0] != '': ax.legend(loc=0, fontsize=10)
+    if grid != False: FormatGrid(ax,'major', grid)
+    if grid_minor != False: FormatGrid(ax,'minor', grid)
 
-
-    ax.set_xscale(scale[0])
-    ax.set_yscale(scale[1])
-    
-    if grid != False:
-        if grid == "x":
-            ax.grid(which='major', axis="x", linestyle='-', linewidth='0.25',color='k')
-        elif grid == "y":
-            ax.grid(which='major', axis="y", linestyle='-', linewidth='0.25',color='k')
-        else:
-            ax.grid(which='major', linestyle='-', linewidth='0.25',color='k')
-
-    if grid_minor != False:
-        if grid_minor == "x":
-            ax.grid(which='minor', axis="x", linestyle='-', linewidth='0.25',color='k')
-        elif grid_minor == "y":
-            ax.grid(which='minor', axis="y", linestyle='-', linewidth='0.25',color='k')
-        else:
-            ax.grid(which='minor', linestyle='-', linewidth='0.25',color='k')
-
-
-    FormatLimits(ax,xlims,ylims)
+    FormatAxes(ax,xlims,ylims,scale)
     LabelPlot(ax,title,xtitle,ytitle)
     DisplayPlot(fig,outfile)
 
