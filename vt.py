@@ -14,6 +14,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 #Sets the default font for all images
 plt.rcParams['figure.dpi'] = 600
 plt.rcParams['font.family'] ='Roboto'
+plt.rcParams['font.family'] ='Times New Roman'
 
 
 def round_sig(x, sig):
@@ -67,35 +68,29 @@ def float2readablestr(x, sig=3):
     return "{:g}".format(x)
 
 
-#Manipulates the y-axis to be the correct dimensions
-def FormatYs(ys):
-    ys = np.array(ys)
+#Manipulates the y-axis and x-axis to be the correct dimensions
+def FormatData(xs, ys):
 
-    nDims = ys.ndim
-    if(nDims > 2 or nDims == 0):
+    #Format y-axis
+    ys = np.array(ys)
+    if(ys.ndim > 2 or ys.ndim == 0):
        raise ValueError("Y array must have a dimension of 1 or 2")
-    elif(nDims == 1):
+    elif(ys.ndim == 1):
         ys = ys[:,np.newaxis]
 
-    return ys 
-
-
-#Manipulates/creates the x-axis to be the correct dimensions
-def FormatXs(xs,ys):
+    #Format x-axis
     nSamples, nPlots = ys.shape
-    
     if xs is None:
-        xs = np.linspace(0,nSamples-1,nSamples)
+        xs = np.arange(nSamples)
     else:
         xs = np.array(xs)
 
-    nDims = xs.ndim
-    if(nDims != 1):
-       raise ValueError("X array must have a dimension of 1")
+    if(xs.ndim > 2 or xs.ndim == 0):
+        raise ValueError("X array must have a dimension of 1 or 2")
+    elif(xs.ndim == 1):
+        xs = np.tile(xs, [nPlots,1]).T
 
-    xs = np.tile(xs, [nPlots,1]).T
-
-    return xs
+    return xs, ys
 
 
 def FormatLabels(labels, nLabels):
@@ -239,35 +234,63 @@ def scale_bar(ax, image, pixels, sb_label=u"10 \u03bcm"):
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     xlims=None,ylims=None,scale=("linear","linear"),
     grid=False,grid_minor=False,
-    color=None,marker='',linestyle='-',labels=None,outfile=False):    
+    color=None,marker='',linestyle='-',labels=None,outfile=False):
     """
-    Displays/Creates a plot
+    Displays/Creates a plot. This is a wrapper function for matplotlib.pyplot
 
-    Parameters:
-        ys:       (array, nPlots)
-        xs:       1d or 2d array
-        title:    title for the plot
-        ylabel:   title for the y-axis
-        outfile:  location to save the file
-        grid: False, x, y, both
-                
-    Returns:
-        Nothing
+    Parameters
+    ----------
+    ys : (samples, nPlots) or (samples) array_like
+        The y values that are plotted.
+    xs : (samples, nPlots) or (samples) array_like, optional
+        The x values that are plotted.. The default is None.
+    err : TYPE, optional
+        DESCRIPTION. The default is None.
+    title : string, optional
+        The title of the plot. The default is "".
+    xtitle : string, optional
+        The x-axis title of the plot. The default is "".
+    ytitle : string, optional
+        The y-axis title of the plot. The default is "".
+    xlims : (2) array_like, optional
+        The range. The default is None.
+    ylims : TYPE, optional
+        DESCRIPTION. The default is None.
+    scale : TYPE, optional
+        DESCRIPTION. The default is ("linear","linear").
+    grid : TYPE, optional
+        DESCRIPTION. The default is False.
+    grid_minor : TYPE, optional
+        DESCRIPTION. The default is False.
+    color : TYPE, optional
+        DESCRIPTION. The default is None.
+    marker : TYPE, optional
+        DESCRIPTION. The default is ''.
+    linestyle : TYPE, optional
+        DESCRIPTION. The default is '-'.
+    labels : TYPE, optional
+        DESCRIPTION. The default is None.
+    outfile : TYPE, optional
+        DESCRIPTION. The default is False.
+
+    Returns
+    -------
+    None.
+
     """
+
+    xs, ys = FormatData(xs, ys)
     
-    ys = FormatYs(ys)
-    xs = FormatXs(xs,ys)
     nSamples, nPlots = ys.shape
     labels = FormatLabels(labels, nPlots)
     color, marker, linestyle = FormatLines(color, marker, linestyle, nPlots)
 
     fig, ax = plt.subplots()
-    if err is None:
-        for i in range(nPlots):
+    for i in range(nPlots):
+        if err is None:
             ax.plot(xs[:,i],ys[:,i],label=labels[i],marker=marker[i],\
                     linestyle=linestyle[i],color=color[i])
-    else:
-        for i in range(nPlots):
+        else:
             ax.errorbar(xs[:,i],ys[:,i],yerr=err,label=labels[i],\
                         fmt='o',capsize=3,markersize=3,\
                         capthick=.5,elinewidth=.5,ecolor='r')
