@@ -575,7 +575,7 @@ def animated_gif(images, outfile, fps=24.):
         img = Image.fromarray(image.astype(np.float32))
         gif.append(img)
 
-
+    print(len(gif)/fps)
     gif[0].save(outfile+'.gif', save_all=True,optimize=False, \
                 append_images=gif[1:], duration=len(gif)/fps, loop=0)
 
