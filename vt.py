@@ -135,6 +135,15 @@ def FormatAxes(ax,xlim,ylim,scale):
     if ylim != None:
         ax.set_ylim(ylim[0],ylim[1])
 
+
+def FormatPlotTicks(ax,xticks,yticks):
+    
+    if xticks is not None:
+        ax.set_xticks(xticks)
+      
+    if yticks is not None:
+        ax.set_yticks(yticks)
+      
     
 def FormatTicks(ax,image,xlim,ylim,ticks):
     
@@ -232,8 +241,8 @@ def scale_bar(ax, image, pixels, sb_label=u"10 \u03bcm"):
 
 
 def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
-    xlims=None,ylims=None,scale=("linear","linear"),
-    grid=False,grid_minor=False,
+    xlims=None,ylims=None,xticks=None,yticks=None,\
+    scale=("linear","linear"),grid=False,grid_minor=False,\
     color=None,marker='',linestyle='-',labels=None,outfile=False):
     """
     Displays/Creates a plot. This is a wrapper function for matplotlib.pyplot
@@ -300,6 +309,7 @@ def CreatePlot(ys,xs=None,err=None,title="",xtitle="",ytitle="",\
     if grid_minor != False: FormatGrid(ax,'minor', grid)
 
     FormatAxes(ax,xlims,ylims,scale)
+    FormatPlotTicks(ax,xticks,yticks)
     LabelPlot(ax,title,xtitle,ytitle)
     DisplayPlot(fig,outfile)
 
