@@ -537,7 +537,7 @@ def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitl
         ax.set_xticks(np.linspace(bin_samplesX/2.0, bin_samplesX*(binsX - 0.5), binsX) - 0.5, minor=True)    
         ax.set_xticklabels(xlabels, minor=True)
     
-    #ax.set_yticks(np.linspace(-.5, binsY*bin_samplesY-.5, binsY+1))
+    ax.set_yticks(np.linspace(-.5, binsY*bin_samplesY-.5, binsY+1))
     ax.set_yticklabels('')
     if ylabels is not None:
         ax.set_yticks(np.linspace(bin_samplesY/2.0, bin_samplesY*(binsY - 0.5), binsY) - 0.5, minor=True)
