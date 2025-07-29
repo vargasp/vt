@@ -506,7 +506,8 @@ def imshow2(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
 def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitle="",\
               xlabels=None, ylabels=None,outfile=False):
 
-
+    print("HERE")
+    
     if bins == None:
         binsX, binsY = arr.shape
     else:
@@ -521,32 +522,28 @@ def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitl
     fig, ax = plt.subplots()
     im = plt.imshow(arr.T, origin='lower',cmap=cm.Greys_r)
     LabelPlot(ax,title,xtitle,ytitle)
-
-
     
     bin_samplesX = int(arr.shape[0]/binsX)
     bin_samplesY = int(arr.shape[1]/binsY)
 
-    print(bin_samplesX)
-    
+    #Sets major X ticks/ticklabels to be the grid
     ax.set_xticks(np.linspace(-.5, binsX*bin_samplesX-.5, binsX+1))
     ax.set_xticklabels('')
-    #ax.tick_params(length=0)
     
     if xlabels is not None:
         ax.set_xticks(np.linspace(bin_samplesX/2.0, bin_samplesX*(binsX - 0.5), binsX) - 0.5, minor=True)    
         ax.set_xticklabels(xlabels, minor=True)
     
+    #Sets major X ticks/ticklabels to be the grid
     ax.set_yticks(np.linspace(-.5, binsY*bin_samplesY-.5, binsY+1))
     ax.set_yticklabels('')
+
     if ylabels is not None:
         ax.set_yticks(np.linspace(bin_samplesY/2.0, bin_samplesY*(binsY - 0.5), binsY) - 0.5, minor=True)
         ax.set_yticklabels(ylabels,minor=True)
    
-    ax.tick_params(axis='both', which='minor', length = 0.0)
-    
+    ax.tick_params(axis='both', which='minor', length=0.0,labelsize=6)    
     ax.grid(visible=True, which='Major', linestyle='-', linewidth='0.5',color='k')
-    
     
     
     if ctitle != "":
@@ -555,8 +552,7 @@ def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitl
         cbar = plt.colorbar(im, cax=cax, ticks=window)
         cbar.ax.set_ylabel(ctitle)
         cbar.ax.tick_params(labelsize=10) 
-    
-    
+
     DisplayPlot(fig,outfile)
 
 
