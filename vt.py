@@ -506,8 +506,6 @@ def imshow2(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
 def hist_show(arr, window=False, bins=None, title="", xtitle="", ytitle="",ctitle="",\
               xlabels=None, ylabels=None,outfile=False):
 
-    print("HERE")
-    
     if bins == None:
         binsX, binsY = arr.shape
     else:
