@@ -372,7 +372,7 @@ def ReadTiffImage(infile):
 
 def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
                 xvals=None,yvals=None,coords=None,outfile=None,text_strings=None,
-                aspect='equal'):
+                aspect='equal',cmap="gray"):
     """
     Displays/Creates a BW intensity image
 
@@ -393,7 +393,7 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
 
     fig, ax = plt.subplots()
     #im = plt.imshow(image, vmin=window[0], vmax=window[1])
-    im = plt.imshow(image, vmin=window[0], interpolation='None', vmax=window[1], cmap=cm.Greys_r, extent=coords, origin="lower")
+    im = plt.imshow(image, vmin=window[0], interpolation='None', vmax=window[1], cmap=cmap, extent=coords, origin="lower")
     LabelPlot(ax,title,xtitle,ytitle)
     
     if coords == None:
