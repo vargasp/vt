@@ -342,8 +342,20 @@ def CreateBoxPlot(samples,title="",xtitle="",ytitle="",labels="",outfile=False,r
 
 
 def CreateTiffImage(image, outfile=None):
-    img = Image.fromarray(image.astype(np.float32))
-    img.save(outfile+'.tif')
+    
+    if image.ndim == 2:
+        img = Image.fromarray(image.astype(np.float32))
+        img.save(outfile+'.tif')
+
+
+    if image.ndim == 3:
+        
+        n = image.shape[2]
+        pad = int(np.log10(abs(n))) + 1
+        
+        for i in range(n):
+            img = Image.fromarray(image[:,:,i].astype(np.float32))
+            img.save(outfile + str(i).zfill(pad) +'.tif')
 
 
 def ReadTiffImageStack(infile, z):
@@ -415,6 +427,53 @@ def CreateImage(image,window=False,title ="",xtitle="",ytitle="",ctitle="",\
 
 
     DisplayPlot(fig,outfile)
+
+
+
+def CreateMotif(images,ncol,nrow,window=False,titles ="",xtitle="",ytitle="",ctitle="",\
+                xvals=None,yvals=None,coords=None,outfile=None,text_strings=None,
+                aspect='equal',cmap="gray"):
+    """
+    Displays/Creates a BW intensity image
+
+    Parameters:        
+        image:    2d np.array of the image to be displayed
+        window:   list or tuple of window range (min, max)
+        title:    title for the image
+        ctitle:   title for the colorbar
+        outfile:  location to save the file
+                
+    Returns:
+        Nothing
+    """
+    plt.rcParams['figure.dpi'] = 600
+    
+    if window == False:
+        window = [np.min(images),np.max(images)]
+
+
+    fig, axes = plt.subplots(nrow,ncol)
+
+
+    # Flatten the axes array for easy iteration
+
+
+    # Iterate through images and plot them
+    for i, (ax, img) in enumerate(zip(axes.flatten(), images)):
+        ax.imshow(img, vmin=window[0], interpolation='None', vmax=window[1], cmap=cmap, extent=coords, origin="lower")
+        
+        LabelPlot(ax,titles[i],xtitle,ytitle)
+    
+        if coords == None:
+            RemoveTicks(ax)
+    
+        ax.set_aspect(aspect)
+        if text_strings != None:
+            for text_string in text_strings:
+                ax.text(text_string[0], text_string[1], text_string[2], fontsize=10, color='white')
+
+    DisplayPlot(fig,outfile)
+
 
 
 def imshow(image,vmin=None,vmax=None,title ="",xtitle="",ytitle="",ctitle="",\
